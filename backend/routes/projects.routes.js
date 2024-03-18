@@ -1,26 +1,26 @@
 import { Router } from "express";
-import db from "../db/connection.js";
 import { ObjectId } from "mongodb"; // This help convert the id from string to ObjectId for the _id.
+import db from "../db/connection.js";
 
 const router = Router();
-const SkillsCollection = db.collection("skills");
+const ProjectsCollection = db.collection("projects");
 
-//Endpoint for getting list of skills
+//Endpoint for getting list of projects
 router.get("/", async (req, res) => {
   try {
-    let results = await SkillsCollection.find({}).toArray();
+    let results = await ProjectsCollection.find({}).toArray();
     res.send(results).status(200);
   } catch (error) {
     console.error(error);
-    res.send("Error getting list of skills!").status(500);
+    res.send("Error getting list of projects!").status(500);
   }
 });
 
-//Endpoint for getting a single skill by id
+//Endpoint for getting a single project by id
 router.get("/:id", async (req, res) => {
   try {
     let query = { _id: new ObjectId(req.params.id) };
-    let result = await SkillsCollection.findOne(query);
+    let result = await ProjectsCollection.findOne(query);
 
     res.send(result).status(200);
   } catch (error) {
@@ -29,50 +29,54 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//Endpoint for adding a single skill
+//Endpoint for adding a single project
 router.post("/", async (req, res) => {
   try {
-    let newSkill = {
-      skill: req.body.skill,
-      proficiency: req.body.proficiency,
+    let newProject = {
+      title: req.body.title,
+      description: req.body.description,
+      image: req.body.image,
+      link: req.body.link,
     };
 
-    let result = await SkillsCollection.insertOne(newSkill);
+    let result = await ProjectsCollection.insertOne(newProject);
     res.send(result).status(201);
   } catch (error) {
     console.error(error);
-    res.send("Error adding a skill").status(500);
+    res.send("Error adding a project").status(500);
   }
 });
 
-//Endpoint for updating a skill by the id
+//Endpoint for updating a project by the id
 router.patch("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };
     const updates = {
       $set: {
-        skill: req.body.skill,
-        proficiency: req.body.proficiency,
+        title: req.body.title,
+        description: req.body.description,
+        image: req.body.image,
+        link: req.body.link,
       },
     };
 
-    let result = await SkillsCollection.updateOne(query, updates);
+    let result = await ProjectsCollection.updateOne(query, updates);
     res.send(result).status(200);
   } catch (error) {
     console.error(error);
-    res.send("Error updating a skill").status(500);
+    res.send("Error updating a project").status(500);
   }
 });
 
-//Endpoint for deleting a skill by id
+//Endpoint for deleting a project by id
 router.delete("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };
-    let result = await SkillsCollection.deleteOne(query);
+    let result = await ProjectsCollection.deleteOne(query);
     res.send(result).status(200);
   } catch (error) {
     console.error(error);
-    res.send("Error deleting a skill").status(500);
+    res.send("Error deleting a project").status(500);
   }
 });
 
