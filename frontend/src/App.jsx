@@ -13,8 +13,11 @@ function App() {
 
   useEffect(() => {
     (async () => {
+      //sample request to get all skills
       const skills = await apiGetAllSkills();
       console.log(skills.data);
+
+      //sample request to get a single skill
       const single_skill = await apiGetSkill("65f87080176aa66e94ca33f9");
       console.log(single_skill.data);
     })();
