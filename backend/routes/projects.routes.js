@@ -1,9 +1,23 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb"; // This help convert the id from string to ObjectId for the _id.
 import db from "../db/connection.js";
+import multer from "multer";
 
 const router = Router();
 const ProjectsCollection = db.collection("projects");
+const mediaUpload = multer({
+  dest: "uploads",
+  limits: {
+    fileSize: 10000000, // 10000000 Bytes = 10 MB
+  },
+  fileFilter(req, file, cb) {
+    // upload only mp4 and mkv format for videos ang png, jpeg,jpg or svg format for images
+    if (!file.originalname.match(/\.(mp4|MPEG-4|mkv|png|jpeg|jpg|svg)$/)) {
+      return cb(new Error("Please upload a video or an image"));
+    }
+    cb(undefined, true);
+  },
+});
 
 //Endpoint for getting list of projects
 router.get("/", async (req, res) => {
@@ -30,13 +44,14 @@ router.get("/:id", async (req, res) => {
 });
 
 //Endpoint for adding a single project
-router.post("/", async (req, res) => {
+router.post("/", mediaUpload.single("media"), async (req, res) => {
   try {
     let newProject = {
       title: req.body.title,
       description: req.body.description,
-      image: req.body.image,
-      link: req.body.link,
+      media: req.body.media,
+      repoLink: req.body.repoLink,
+      liveDemo: req.body.liveDemo,
     };
 
     let result = await ProjectsCollection.insertOne(newProject);
@@ -55,8 +70,9 @@ router.patch("/:id", async (req, res) => {
       $set: {
         title: req.body.title,
         description: req.body.description,
-        image: req.body.image,
-        link: req.body.link,
+        media: req.body.media,
+        repoLink: req.body.repoLink,
+        liveDemo: req.body.liveDemo,
       },
     };
 

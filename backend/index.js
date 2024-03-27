@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 import skills from "./routes/skills.routes.js";
 import projects from "./routes/projects.routes.js";
@@ -13,8 +12,8 @@ const app = express();
 
 //add middlewares
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 //load routes
 app.use("/skills", skills);
